@@ -1,0 +1,63 @@
+<project name="goofs" default="all" basedir=".">
+  <description>
+    goofs
+  </description>
+
+  <property name="src"   location="src"   />
+  <property name="data"  location="data"  />
+  <property name="build" location="build" />
+  <property name="doc"   location="doc"   />
+  <property name="dest"  location="."     />
+
+  <target name="init">
+    <echo>Creating timestamp...</echo>
+    <tstamp />
+    <echo>Building directory structure...</echo>
+    <mkdir dir="${build}" />
+    <mkdir dir="${doc}"   />
+  </target>
+
+  <target name="compile" depends="init" description="compile goofs">
+    <echo>Compiling goofs...</echo>
+    <javac verbose="no" srcdir="${src}" destdir="${build}">
+      <compilerarg value="-Xlint" />
+      <compilerarg value="-Xlint:-path" />
+    </javac>
+  </target>
+
+  <target name="chunkserver" depends="compile" description="build jar file for chunkserver">
+    <echo>Build chunkserver...</echo>
+    <jar jarfile="${dest}/chunkserver.jar" basedir="${build}" manifest="${src}/chunkserver.mf" compress="no" index="yes" />
+  </target>
+
+  <target name="controller" depends="compile" description="build jar file for controller">
+    <echo>Build controller...</echo>
+    <jar jarfile="${dest}/controller.jar" basedir="${build}" manifest="${src}/controller.mf" compress="no" index="yes" />
+  </target>
+
+  <target name="client" depends="compile" description="build jar file for client">
+    <echo>Build client...</echo>
+    <jar jarfile="${dest}/client.jar" basedir="${build}" manifest="${src}/client.mf" compress="no" index="yes" />
+  </target>
+
+  <target name="doc" description="Create javadocs for goofs">
+    <echo>Building documentation...</echo>
+    <javadoc sourcepath="${src}" destdir="${doc}" />
+  </target>
+
+  <target name="all" depends="chunkserver,controller,client" description="build a new release of goofs">
+    <!-- all work done in dependencies -->
+  </target>
+
+  <target name="clean" description="clean up">
+    <delete dir="${build}" />
+  </target>
+
+  <target name="remove" depends="clean" description="remove previous build">
+    <delete file="chunkserver.jar"  />
+    <delete file="controller.jar"   />
+    <delete file="client.jar"       />
+    <delete dir="${doc}"            />
+  </target>
+
+</project>
